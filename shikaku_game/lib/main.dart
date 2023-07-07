@@ -34,7 +34,7 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
     resetGame();
   }
 
- void resetGame() {
+  void resetGame() {
     setState(() {
       cells = List.generate(
         numRows,
@@ -47,7 +47,8 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
         ),
       );
       cells[0][0].number = 3; // Set the number to 3 for the top left corner tile
-      cells[0][numColumns - 1].number = 4; // Set the number to 4 for the top right corner tile
+      cells[0][numColumns - 1].number =
+          4; // Set the number to 4 for the top right corner tile
       cells[0][3].number = 3; // Sets the number to 3 for the center top tile
       cells[1][1].number = 4;
       cells[1][4].number = 4;
@@ -59,8 +60,6 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
       cells[5][3].number = 2;
       cells[5][6].number = 3;
       cells[6][4].number = 4;
-      
-      
 
       score = 0;
     });
@@ -124,95 +123,86 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[800], // Set a darker grey background color
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              'Shikaku Game',
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Daily Shikaku',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 36,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Score: $score',
-              style: TextStyle(fontSize: 18, color: Colors.white),
-            ),
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: Align(
-                alignment: Alignment.center, // Center the grid
-                child: Container(
-                  width: 700, // Set a fixed width
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.white,
-                      width: 5.0,
-                    ),
-                  ),
-                  child: GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(0.0),
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: numColumns,
-                      childAspectRatio: 1.0,
-                    ),
-                    itemBuilder: (context, index) {
-                      final row = index ~/ numColumns;
-                      final column = index % numColumns;
-
-                      return GestureDetector(
-                        onTap: () {
-                          toggleCellState(row, column);
-                          calculateScore();
-                          checkAndScoreRectangle(row, column);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.white),
-                            color: cells[row][column].filled
-                                ? Colors.grey[400] // Set a darker color for filled tiles
-                                : Colors.grey[800], // Set a darker color for unfilled tiles
-                          ),
-                          child: Center(
-                            child: cells[row][column].number > 0
-                                ? Text(
-                                    cells[row][column].number.toString(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : null,
-                          ),
-                        ),
-                      );
-                    },
-                    itemCount: numRows * numColumns,
-                    shrinkWrap: true,
-                  ),
-                ),
+            SizedBox(height: 40),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Divide the grid into rectangles and squares, such that each piece contains exactly one number, and that number equals the area of the piece.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.all(16.0),
-            alignment: Alignment.center,
-            child: ElevatedButton(
+            SizedBox(height: 70),
+            Container(
+              width: 700, // Set a fixed width
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white,
+                  width: 5.0,
+                ),
+              ),
+              child: GridView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.all(0.0),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: numColumns,
+                  childAspectRatio: 1.0,
+                ),
+                itemBuilder: (context, index) {
+                  final row = index ~/ numColumns;
+                  final column = index % numColumns;
+
+                  return GestureDetector(
+                    onTap: () {
+                      toggleCellState(row, column);
+                      calculateScore();
+                      checkAndScoreRectangle(row, column);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.white, width: 2.0),
+                        color: cells[row][column].filled
+                            ? Colors.grey[400] // Set a darker color for filled tiles
+                            : Colors.grey[800], // Set a darker color for unfilled tiles
+                      ),
+                      child: Center(
+                        child: cells[row][column].number > 0
+                            ? Text(
+                                cells[row][column].number.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+                itemCount: numRows * numColumns,
+                shrinkWrap: true,
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
               child: Text('Reset'),
               onPressed: resetGame,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
