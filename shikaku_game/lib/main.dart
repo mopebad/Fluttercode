@@ -135,7 +135,7 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 30),
             Container(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
@@ -144,7 +144,7 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),
             ),
-            SizedBox(height: 70),
+            SizedBox(height: 50),
             Container(
               width: 700, // Set a fixed width
               decoration: BoxDecoration(
