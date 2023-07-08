@@ -175,7 +175,7 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
                         border: Border.all(color: Colors.white, width: 2.0),
                         color: cells[row][column].filled
                             ? Colors.grey[400] // Set a darker color for filled tiles
-                            : Colors.grey[800], // Set a darker color for unfilled tiles
+                            : Colors.grey[900], // Set a darker color for unfilled tiles
                       ),
                       child: Center(
                         child: cells[row][column].number > 0
@@ -195,11 +195,6 @@ class _ShikakuGamePageState extends State<ShikakuGamePage> {
                 itemCount: numRows * numColumns,
                 shrinkWrap: true,
               ),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              child: Text('Reset'),
-              onPressed: resetGame,
             ),
           ],
         ),
