@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1004132490441-f9ksuj5eatj8sog9fspb66cti5o64a1m.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1004132490441-f9ksuj5eatj8sog9fspb66cti5o64a1m</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBDF8j-tUsVH8KcskRuc7YiW0foGwGX_3E</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1004132490441</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.minigames</string>
+	<key>PROJECT_ID</key>
+	<string>minigames-e7278</string>
+	<key>STORAGE_BUCKET</key>
+	<string>minigames-e7278.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1004132490441:ios:40033d2a8c15664354c118</string>
+</dict>
+</plist>

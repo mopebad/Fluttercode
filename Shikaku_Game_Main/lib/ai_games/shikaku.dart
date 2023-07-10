@@ -40,6 +40,8 @@ class _ShikakuGameState extends State<ShikakuGame> {
     Colors.deepPurple,
   ];
 
+  
+
   @override
   void initState() {
     super.initState();
@@ -47,6 +49,25 @@ class _ShikakuGameState extends State<ShikakuGame> {
     cols = (widget.numbers.length / rows).ceil().toInt();
     grid = List.generate(rows, (row) => List.generate(cols, (col) => 0));
   }
+
+List<int> regeneratedNumbers = [];
+
+  void regeneratePuzzle() {
+  setState(() {
+    // Generate a new puzzle by assigning the numbers to regeneratedNumbers
+    // Replace the numbers below with your desired puzzle generation logic
+    regeneratedNumbers = [
+      2, 0, 3, 0, 0,
+      0, 0, 3, 0, 0,
+      0, 2, 3, 0, 0,
+      0, 0, 0, 2, 4,
+      2, 0, 0, 2, 0,
+    ];
+    resetGrid(); // Reset the grid for the new puzzle
+  });
+}
+
+
 
   bool checkWin() {
     for (int row = 0; row < rows; row++) {
@@ -59,7 +80,7 @@ class _ShikakuGameState extends State<ShikakuGame> {
     return true;
   }
   
-  void showWinDialog() {
+ void showWinDialog() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -76,7 +97,6 @@ class _ShikakuGameState extends State<ShikakuGame> {
       ),
     );
   }
-  
   void selectCell(int row, int col) {
     _logger.info('Selected cell at row $row, column $col');
     
@@ -158,12 +178,24 @@ class _ShikakuGameState extends State<ShikakuGame> {
     });
   }
 
+  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[800],
       appBar: AppBar(
-        title: const Text('Shikaku'),
-      ),
+  title: const Text(
+    
+    'Daily Shikaku',
+    style: TextStyle(color: Colors.white, fontSize: 24),
+    
+  ),
+  centerTitle: true,
+  backgroundColor: Colors.grey[800],
+),
+
+
       floatingActionButton: FloatingActionButton(
         onPressed: resetGrid,
         tooltip: 'Reset',
@@ -183,10 +215,15 @@ class _ShikakuGameState extends State<ShikakuGame> {
                       selectCell(row, col);
                     },
                     child: Container(
-                      width: 50,
-                      height: 50,
+                      width: 100,
+                      height: 100,
                       decoration: BoxDecoration(
-                        border: Border.all(),
+                        border: const Border(
+                          top: BorderSide(width: 4, color: Colors.white), // Outline top border
+                          left: BorderSide(width: 4, color: Colors.white), // Outline left border
+                          right: BorderSide(width: 4, color: Colors.white), // Outline right border
+                          bottom: BorderSide(width: 4, color: Colors.white), // Outline bottom border
+                        ),
                         color: colors[grid[row][col]],
                         // Update color of selected cell
                         boxShadow: selectedRow == row && selectedCol == col
@@ -196,7 +233,7 @@ class _ShikakuGameState extends State<ShikakuGame> {
                       child: Center(
                         child: Text(
                           '${widget.numbers[row * cols + col]}',
-                          style: const TextStyle(fontSize: 24),
+                          style: const TextStyle(fontSize: 30),
                         ),
                       ),
                     ),
