@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:minigames/ai_games/shikaku_menu.dart';
-
+import 'package:minigames/shikaku.dart';
 
 void main() async{
   runApp(const MyApp());
@@ -13,11 +12,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Mini Games',
+      title: 'Daily Shikaku',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ShikakuGameMenu(),
+      home: const ShikakuGame(numbers: [
+        3, 0, 0, 3, 0, 0, 4,
+        0, 4, 0, 0, 4, 0, 0,
+        0, 0, 0, 0, 0, 6, 0,
+        2, 0, 0, 0, 0, 0, 0,
+        0, 0, 4, 0, 0, 4, 0,
+        0, 6, 0, 2, 0, 0, 3,
+        0, 0, 0, 0, 4, 0, 0
+      ]),
     );
   }
 }
@@ -51,3 +58,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+

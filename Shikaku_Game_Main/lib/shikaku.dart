@@ -50,25 +50,6 @@ class _ShikakuGameState extends State<ShikakuGame> {
     grid = List.generate(rows, (row) => List.generate(cols, (col) => 0));
   }
 
-List<int> regeneratedNumbers = [];
-
-  void regeneratePuzzle() {
-  setState(() {
-    // Generate a new puzzle by assigning the numbers to regeneratedNumbers
-    // Replace the numbers below with your desired puzzle generation logic
-    regeneratedNumbers = [
-      2, 0, 3, 0, 0,
-      0, 0, 3, 0, 0,
-      0, 2, 3, 0, 0,
-      0, 0, 0, 2, 4,
-      2, 0, 0, 2, 0,
-    ];
-    resetGrid(); // Reset the grid for the new puzzle
-  });
-}
-
-
-
   bool checkWin() {
     for (int row = 0; row < rows; row++) {
       for (int col = 0; col < cols; col++) {
@@ -91,7 +72,7 @@ List<int> regeneratedNumbers = [];
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('OK'),
+            child: const Text('Exit'),
           ),
         ],
       ),
@@ -188,7 +169,7 @@ List<int> regeneratedNumbers = [];
   title: const Text(
     
     'Daily Shikaku',
-    style: TextStyle(color: Colors.white, fontSize: 24),
+    style: TextStyle(color: Colors.white, fontSize: 34),
     
   ),
   centerTitle: true,
@@ -200,23 +181,35 @@ List<int> regeneratedNumbers = [];
         onPressed: resetGrid,
         tooltip: 'Reset',
         child: const Icon(Icons.refresh),
-      ),      
-      body: Center(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: rows,
-          itemBuilder: (context, row) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int col = 0; col < cols; col++)
-                  GestureDetector(
-                    onTap: () {
-                      selectCell(row, col);
-                    },
-                    child: Container(
-                      width: 100,
-                      height: 100,
+      ),
+      body: Column(
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              'Divide the grid into rectangles and squares, such that each piece contains exactly one number, and that number equals the area of the piece.',
+              style: TextStyle(color: Colors.white, fontSize: 18),
+              
+              textAlign: TextAlign.center,
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: rows,
+                itemBuilder: (context, row) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      for (int col = 0; col < cols; col++)
+                        GestureDetector(
+                          onTap: () {
+                            selectCell(row, col);
+                          },
+                          child: Container(
+                            width: 100,
+                            height: 100,
                       decoration: BoxDecoration(
                         border: const Border(
                           top: BorderSide(width: 4, color: Colors.white), // Outline top border
@@ -243,6 +236,9 @@ List<int> regeneratedNumbers = [];
           },
         ),
       ),
+    )
+    ],
+    )
     );
   }
 }
