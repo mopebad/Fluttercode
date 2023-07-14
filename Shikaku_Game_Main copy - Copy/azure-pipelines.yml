@@ -1,0 +1,30 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+steps:
+- script: |
+    flutter analyze --no-fatal-infos
+  displayName: 'Lint'
+
+- script: |
+    flutter pub global activate junitreport
+    mkdir -p test-results
+    flutter test --machine | $HOME/.pub-cache/bin/tojunit --output test-results/TEST-output.xml
+  displayName: 'Test'
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: 'test-results/TEST-*.xml'
+    failTaskOnFailedTests: false
+
+- script: flutter build web --base-href "/minigames/"
+  displayName: 'Build'
+
+- script: |
+    cp -r assets/* build/web/assets
+    zip -r flutter.zip build/web
+  displayName: 'Zip artifact'
