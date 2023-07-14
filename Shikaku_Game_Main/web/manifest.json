@@ -1,6 +1,6 @@
 {
-    "name": "minigames",
-    "short_name": "minigames",
+    "name": "Daily Shikaku",
+    "short_name": "Daily Shikaku",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
@@ -10,7 +10,7 @@
     "prefer_related_applications": false,
     "icons": [
         {
-            "src": "icons/Icon-192.png",
+            "src": "favicon.ico",
             "sizes": "192x192",
             "type": "image/png"
         },
