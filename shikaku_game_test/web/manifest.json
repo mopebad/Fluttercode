@@ -1,6 +1,6 @@
 {
-    "name": "shikaku_game",
-    "short_name": "shikaku_game",
+    "name": "minigames",
+    "short_name": "minigames",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

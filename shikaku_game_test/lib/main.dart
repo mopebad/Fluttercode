@@ -1,211 +1,311 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:logging/logging.dart';
+import 'package:minigames/shikaku.dart';
 
-class ShikakuGame extends StatefulWidget {
-  final List<int> numbers;
-  const ShikakuGame({Key? key, required this.numbers}) : super(key: key);
 
-  @override
-  // ignore: library_private_types_in_public_api
-  _ShikakuGameState createState() => _ShikakuGameState();
+void main() async {
+  runApp(const MyApp());
 }
 
-class _ShikakuGameState extends State<ShikakuGame> {
-  late List<List<int>> grid;
-  late int rows;
-  late int cols;
-  int? selectedRow;
-  int? selectedCol;
-  final _logger = Logger('ShikakuGame');
-  int colorIndex = 0;
-  final List<Color> colors = [
-    Colors.white70,
-    Colors.red,
-    Colors.green,
-    Colors.blue,
-    Colors.yellow,
-    Colors.orange,
-    Colors.pink,
-    Colors.purple,
-    Colors.teal,
-    Colors.brown,
-    Colors.amber,
-    Colors.cyan,
-    Colors.deepOrange,
-    Colors.indigo,
-    Colors.lime,
-    Colors.lightBlue,
-    Colors.lightGreen,
-    Colors.deepPurple,
-  ];
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Daily Shikaku',
+      theme: ThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 3.0, color: Colors.white),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(width: 3.0, color: Colors.white),
+          ),
+        ),
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Create Shikaku Puzzle'),
+          backgroundColor: Colors.grey[800], // Set the background color to grey
+        ),
+        backgroundColor: Colors.grey[800], // Set the background color to grey
+        body: Center(
+          child: SizedBox(
+            width: 800, // Set the desired width
+            height: 900, // Set the desired height
+            child: const CreatePuzzleScreen(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class CreatePuzzleScreen extends StatefulWidget {
+  const CreatePuzzleScreen({Key? key}) : super(key: key);
+
+  @override
+  _CreatePuzzleScreenState createState() => _CreatePuzzleScreenState();
+}
+
+class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
+  late List<int> numbers;
+  bool isAdmin = false;
+  late TextEditingController passwordController;
 
   @override
   void initState() {
     super.initState();
-    rows = sqrt(widget.numbers.length).floor();
-    cols = (widget.numbers.length / rows).ceil().toInt();
-    grid = List.generate(rows, (row) => List.generate(cols, (col) => 0));
+    numbers = List.generate(49, (_) => 0);
+    passwordController = TextEditingController();
   }
 
-  bool checkWin() {
-    for (int row = 0; row < rows; row++) {
-      for (int col = 0; col < cols; col++) {
-        if (grid[row][col] == 0) {
-          return false;
-        }
-      }
-    }
-    return true;
+  void setNumber(int index, int number) {
+    setState(() {
+      numbers[index] = number;
+    });
   }
-  
-  void showWinDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Congratulations!'),
-        content: const Text('You have solved the puzzle.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('OK'),
-          ),
-        ],
+
+  void startGame() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ShikakuGame(numbers: numbers),
       ),
     );
   }
-  
-  void selectCell(int row, int col) {
-    _logger.info('Selected cell at row $row, column $col');
-    
-    setState(() {
-      if (selectedRow != null && ( selectedRow != row || selectedCol != col)) {
-        // User has selected a second cell
-        int area = selectedArea(row, col, selectedRow!, selectedCol!);
-        _logger.info('Selected area $area');
 
-        if (isValidSelection(row, col, selectedRow!, selectedCol!)) {
-          // User has selected a valid area
-          _logger.info('Valid selection');
-          colorSelection(row, col, selectedRow!, selectedCol!);
-        }
-
-        if (checkWin()) {
-          showWinDialog();
-        }
-
-        selectedRow = null;
-        selectedCol = null;
-      } else {
-        // User has selected a cell for the first time
-        selectedRow = row;
-        selectedCol = col;
-      }
-    });
-  }
-
-  void colorSelection(int row1, int col1, int row2, int col2) {
-    colorIndex++;
-    if (colorIndex > colors.length - 1) {
-      colorIndex = 1;
+  void submitPassword(String password) {
+    if (password == '1234') {
+      setState(() {
+        isAdmin = true;
+      });
     }
-    for (int r = min(row1, row2); r <= max(row1, row2); r++) {
-      for (int c = min(col1, col2); c <= max(col1, col2); c++) {
-        grid[r][c] = colorIndex;
-      }
-    }
-  }
-
-  int selectedArea(int row1, int col1, int row2, int col2) {
-    return ((row2 - row1).abs() + 1) * ((col2 - col1).abs() + 1);
-  }
-
-  bool isValidSelection(int row1, int col1, int row2, int col2) {
-    int selectedNumber = -1;
-    int startRow = min(row1, row2);
-    int endRow = max(row1, row2);
-    int startCol = min(col1, col2);
-    int endCol = max(col1, col2);
-    
-    for (int row = startRow; row <= endRow; row++) {
-      for (int col = startCol; col <= endCol; col++) {
-        int number = widget.numbers[row * cols + col];
-        if (number > 0) {
-          if (selectedNumber == -1) {
-            selectedNumber = number;
-          } else {
-            return false; // Condition 1 not met, more than 1 positive integer selected
-          }
-        }
-      }
-    }
-    if (selectedNumber == -1) {
-      return false; // No positive integer selected
-    }
-
-    return (selectedArea(row1, col1, row2, col2) == selectedNumber); // Condition 2
-  }
-
-  void resetGrid() {
-    setState(() {
-      for (int row = 0; row < rows; row++) {
-        for (int col = 0; col < cols; col++) {
-          grid[row][col] = 0;
-        }
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Shikaku'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: resetGrid,
-        tooltip: 'Reset',
-        child: const Icon(Icons.refresh),
-      ),      
-      body: Center(
-        child: ListView.builder(
-          shrinkWrap: true,
-          itemCount: rows,
-          itemBuilder: (context, row) {
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int col = 0; col < cols; col++)
-                  GestureDetector(
-                    onTap: () {
-                      selectCell(row, col);
-                    },
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        color: colors[grid[row][col]],
-                        // Update color of selected cell
-                        boxShadow: selectedRow == row && selectedCol == col
-                            ? [ const BoxShadow(color: Colors.blue, blurRadius: 5)]
-                            : null,                        
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${widget.numbers[row * cols + col]}',
-                          style: const TextStyle(fontSize: 24),
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            );
-          },
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(0),
+        child: AppBar(
+          backgroundColor: Colors.grey[800],
+          elevation: 0,
         ),
       ),
+      backgroundColor: Colors.grey[800],
+      body: Container(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Text(
+                isAdmin
+                    ? 'Input Numbers Into The Tiles. Make The Puzzle Is Solveable.'
+                    : 'Enter Password.',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18.0,
+                  fontFamily: 'PlayfairDisplay',
+                  fontStyle: FontStyle.italic
+                ),
+              ),
+            ),
+            if (!isAdmin)
+              Column(
+                children: [
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 3.0, color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(width: 3.0, color: Colors.white),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20.0),
+                  ElevatedButton(
+  onPressed: () {
+    submitPassword(passwordController.text);
+  },
+  style: ElevatedButton.styleFrom(
+    primary: Colors.grey[800],
+    side: const BorderSide(width: 3.0, color: Colors.white),
+    padding: const EdgeInsets.all(20.0),
+  ),
+  child: const Text(
+    'Submit',
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: 'PlayfairDisplay', // Added font family
+    ),
+  ),
+),
+
+                  const SizedBox(height: 20.0),
+                  ElevatedButton(
+  onPressed: startGame,
+  style: ElevatedButton.styleFrom(
+    primary: Colors.grey[800],
+    side: const BorderSide(width: 3.0, color: Colors.white),
+    padding: const EdgeInsets.all(20.0),
+  ),
+  child: const Text(
+    'Continue to Puzzle',
+    style: TextStyle(
+      color: Colors.white,
+      fontFamily: 'PlayfairDisplay', // Added font family
+    ),
+  ),
+),
+                ],
+              ),
+            Visibility(
+              visible: isAdmin,
+              child: Column(
+                children: [
+                  GridView.builder(
+                    shrinkWrap: true,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 7,
+                      mainAxisSpacing: 8.0,
+                      crossAxisSpacing: 8.0,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemCount: numbers.length,
+                    itemBuilder: (context, index) {
+                      return NumberButton(
+                        number: numbers[index],
+                        onPressed: (number) {
+                          setNumber(index, number);
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: startGame,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(16.0),
+                    ),
+                    child: const Text('Start Game', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NumberButton extends StatelessWidget {
+  final int number;
+  final ValueSetter<int> onPressed;
+
+  const NumberButton({
+    Key? key,
+    required this.number,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        showDialog(
+          context: context,
+          builder: (context) => NumberInputDialog(
+            initialValue: number,
+            onChanged: onPressed,
+          ),
+        );
+      },
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(16.0),
+        primary: Colors.grey[800],
+        side: const BorderSide(width: 3.0, color: Colors.white),
+      ),
+      child: Text(
+        number.toString(),
+        style: const TextStyle(fontSize: 24.0, color: Colors.white),
+      ),
+    );
+  }
+}
+
+class NumberInputDialog extends StatefulWidget {
+  final int initialValue;
+  final ValueSetter<int> onChanged;
+
+  const NumberInputDialog({
+    Key? key,
+    required this.initialValue,
+    required this.onChanged,
+  }) : super(key: key);
+
+  @override
+  _NumberInputDialogState createState() => _NumberInputDialogState();
+}
+
+class _NumberInputDialogState extends State<NumberInputDialog> {
+  late TextEditingController _controller;
+  late int _number;
+
+  @override
+  void initState() {
+    super.initState();
+    _number = widget.initialValue;
+    _controller = TextEditingController(text: _number.toString());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.grey[800],
+      title: const Text('Enter Number', style: TextStyle(color: Colors.white)),
+      content: TextField(
+        controller: _controller,
+        keyboardType: TextInputType.number,
+        style: const TextStyle(color: Colors.white),
+        decoration: const InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: BorderSide(color: Colors.white),
+          ),
+        ),
+        onChanged: (value) {
+          setState(() {
+            _number = int.tryParse(value) ?? 0;
+          });
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            widget.onChanged(_number);
+          },
+          child: const Text('OK', style: TextStyle(color: Colors.white)),
+        ),
+      ],
     );
   }
 }
