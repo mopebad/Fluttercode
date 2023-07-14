@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:minigames/shikaku.dart';
 
-
 void main() async {
   runApp(const MyApp());
 }
@@ -27,14 +26,17 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Create Shikaku Puzzle'),
-          backgroundColor: Colors.grey[800], // Set the background color to grey
+          title: const Text(
+            'Create Shikaku Puzzle',
+            style: TextStyle(fontFamily: 'PlayfairDisplay'),
+          ),
+          backgroundColor: Colors.grey[800],
         ),
-        backgroundColor: Colors.grey[800], // Set the background color to grey
+        backgroundColor: Colors.grey[800],
         body: Center(
           child: SizedBox(
-            width: 800, // Set the desired width
-            height: 900, // Set the desired height
+            width: 800,
+            height: 900,
             child: const CreatePuzzleScreen(),
           ),
         ),
@@ -42,8 +44,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
 
 class CreatePuzzleScreen extends StatefulWidget {
   const CreatePuzzleScreen({Key? key}) : super(key: key);
@@ -56,6 +56,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
   late List<int> numbers;
   bool isAdmin = false;
   late TextEditingController passwordController;
+  bool showIncorrectPasswordError = false; // Added state variable
 
   @override
   void initState() {
@@ -84,6 +85,10 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
       setState(() {
         isAdmin = true;
       });
+    } else {
+      setState(() {
+        showIncorrectPasswordError = true;
+      });
     }
   }
 
@@ -91,7 +96,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(0),
+        preferredSize: const Size.fromHeight(0),
         child: AppBar(
           backgroundColor: Colors.grey[800],
           elevation: 0,
@@ -107,13 +112,12 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
                 isAdmin
-                    ? 'Input Numbers Into The Tiles. Make The Puzzle Is Solveable.'
+                    ? 'Input Numbers Into The Tiles. Make The Puzzle Is Solvable.'
                     : 'Enter Password.',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18.0,
                   fontFamily: 'PlayfairDisplay',
-                  fontStyle: FontStyle.italic
                 ),
               ),
             ),
@@ -127,49 +131,62 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       fillColor: Colors.white,
                       filled: true,
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 3.0, color: Colors.white),
+                        borderSide: const BorderSide(width: 3.0, color: Colors.white),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(width: 3.0, color: Colors.white),
+                        borderSide: const BorderSide(width: 3.0, color: Colors.white),
                       ),
                     ),
                     obscureText: true,
                   ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
-  onPressed: () {
-    submitPassword(passwordController.text);
-  },
-  style: ElevatedButton.styleFrom(
-    primary: Colors.grey[800],
-    side: const BorderSide(width: 3.0, color: Colors.white),
-    padding: const EdgeInsets.all(20.0),
-  ),
-  child: const Text(
-    'Submit',
-    style: TextStyle(
-      color: Colors.white,
-      fontFamily: 'PlayfairDisplay', // Added font family
-    ),
-  ),
-),
-
+                    onPressed: () {
+                      submitPassword(passwordController.text);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'PlayfairDisplay',
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
-  onPressed: startGame,
-  style: ElevatedButton.styleFrom(
-    primary: Colors.grey[800],
-    side: const BorderSide(width: 3.0, color: Colors.white),
-    padding: const EdgeInsets.all(20.0),
-  ),
-  child: const Text(
-    'Continue to Puzzle',
-    style: TextStyle(
-      color: Colors.white,
-      fontFamily: 'PlayfairDisplay', // Added font family
-    ),
-  ),
-),
+                    onPressed: startGame,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    child: const Text(
+                      'Continue to Puzzle',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'PlayfairDisplay',
+                      ),
+                    ),
+                  ),
+                  if (showIncorrectPasswordError) // Display error message if incorrect password
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Incorrect password, try again.',
+                        style: TextStyle(
+                        color: Colors.red,
+                        fontFamily: 'PlayfairDisplay',
+                        
+                        fontSize: 20,)
+                      ),
+                    ),
                 ],
               ),
             Visibility(
