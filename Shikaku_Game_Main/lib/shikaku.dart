@@ -19,24 +19,23 @@ class ShikakuGameState extends State<ShikakuGame> {
   int colorIndex = 0;
   final List<Color> colors = [
     Colors.black38,
-    Colors.deepOrange.shade300,
-    Colors.lightGreen.shade300,
-    Colors.blueGrey.shade300,
-    Colors.amber.shade300,
-    Colors.orange.shade300,
-    Colors.pink.shade300,
-    Colors.deepPurple.shade300,
-    Colors.teal.shade300,
-    Colors.brown.shade300,
-    Colors.indigo.shade300,
-    Colors.cyan.shade300,
-    Colors.red.shade300,
-    Colors.green.shade300,
-    Colors.purple.shade300,
-    Colors.yellow.shade300,
-    Colors.blue.shade300,
-    Colors.lime.shade300,
-    Colors.lightBlue.shade300,
+    Colors.red,
+    Colors.green,
+    Colors.blue,
+    Colors.yellow,
+    Colors.orange,
+    Colors.pink,  
+    Colors.purple,
+    Colors.teal,
+    Colors.brown,
+    Colors.amber,
+    Colors.cyan,
+    Colors.deepOrange,
+    Colors.indigo,
+    Colors.lime,
+    Colors.lightBlue,
+    Colors.lightGreen,
+    Colors.deepPurple,
   ];
 
   @override
@@ -181,120 +180,132 @@ class ShikakuGameState extends State<ShikakuGame> {
   }
 
    @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[800],
-      appBar: AppBar(
-        title: const Text(
-          'Daily Shikaku',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 34,
-            fontFamily: 'PlayfairDisplay',
-            fontWeight: FontWeight.bold,
-          ),
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: Colors.grey[800],
+    appBar: AppBar(
+      title: const Text(
+        'Daily Shikaku',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 34,
+          fontFamily: 'PlayfairDisplay',
+          fontWeight: FontWeight.bold,
         ),
-        centerTitle: true,
-        backgroundColor: Colors.grey[800],
       ),
-      body: Column(
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Divide the grid into rectangles and squares, such that each piece contains exactly one number, and that number equals the area of the piece.',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontFamily: 'Lato',
-                //fontWeight: FontWeight.bold,
+      centerTitle: true,
+      backgroundColor: Colors.grey[800],
+    ),
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(bottom: 30.0),
+              child: Text(
+                'Divide the grid into rectangles or squares, ensuring that each piece contains exactly one number (excluding 0) and that the number corresponds to the area of the piece.\n Use the reset button to clear the board, and the undo button to revert your most recent move.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontFamily: 'Lato',
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
-          ),
-    Expanded(
-      child: Stack(
-        children: [
-          Center(
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: 7,
-              itemBuilder: (context, row) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    for (int col = 0; col < 7; col++)
-                      GestureDetector(
-                        onTap: () {
-                          selectCell(row, col);
+            Expanded(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: 7,
+                        itemBuilder: (context, row) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              for (int col = 0; col < 7; col++)
+                                GestureDetector(
+                                  onTap: () {
+                                    selectCell(row, col);
+                                  },
+                                  child: Container(
+                                    width: 100,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      border: const Border(
+                                        top: BorderSide(width: 4, color: Colors.white),
+                                        left: BorderSide(width: 4, color: Colors.white),
+                                        right: BorderSide(width: 4, color: Colors.white),
+                                        bottom: BorderSide(width: 4, color: Colors.white),
+                                      ),
+                                      color: colors[grid[row][col]],
+                                      boxShadow: selectedRow == row && selectedCol == col
+                                          ? [const BoxShadow(color: Colors.blue, blurRadius: 5)]
+                                          : null,
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        '${widget.numbers[row * 7 + col]}',
+                                        style: const TextStyle(fontSize: 30, color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          );
                         },
-                        child: Container(
-                          width: 100,
-                          height: 100,
-                          decoration: BoxDecoration(
-                            border: const Border(
-                              top: BorderSide(width: 4, color: Colors.white), // Outline top border
-                              left: BorderSide(width: 4, color: Colors.white), // Outline left border
-                              right: BorderSide(width: 4, color: Colors.white), // Outline right border
-                              bottom: BorderSide(width: 4, color: Colors.white), // Outline bottom border
-                            ),
-                            color: colors[grid[row][col]],
-                            // Update color of selected cell
-                            boxShadow: selectedRow == row && selectedCol == col
-                                ? [const BoxShadow(color: Colors.blue, blurRadius: 5)]
-                                : null,
-                          ),
-                          child: Center(
-                            child: Text(
-                              '${widget.numbers[row * 7 + col]}',
-                              style: const TextStyle(fontSize: 30, color: Colors.white),
-                            ),
-                          ),
-                        ),
                       ),
-                  ],
-                );
-              },
+                      SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 3.0),
+                            ),
+                            child: FloatingActionButton(
+                              onPressed: resetGrid,
+                              tooltip: 'Reset',
+                              backgroundColor: Colors.grey[800],
+                              child: const Icon(Icons.refresh, color: Colors.white),
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 3.0),
+                            ),
+                            child: FloatingActionButton(
+                              onPressed: undoMove,
+                              tooltip: 'Undo',
+                              backgroundColor: Colors.grey[800],
+                              child: const Icon(Icons.undo, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-          Positioned(
-  bottom: 163.0,
-  right: 535.0,
-  child: Container(
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      border: Border.all(color: Colors.white, width: 3.0),
-    ),
-    child: FloatingActionButton(
-      onPressed: resetGrid,
-      tooltip: 'Reset',
-      backgroundColor: Colors.grey[800],
-      child: const Icon(Icons.refresh, color: Colors.white),
-    ),
-  ),
-),
-Positioned(
-  bottom: 90.0,
-  right: 535.0, // Adjust the right value to position the Undo button
-  child: Container(
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      border: Border.all(color: Colors.white, width: 3.0),
-    ),
-    child: FloatingActionButton(
-      onPressed: undoMove,
-      tooltip: 'Undo',
-      backgroundColor: Colors.grey[800],
-      child: const Icon(Icons.undo, color: Colors.white),
-    ),
-  ),
-),
-
-        ],
+          ],
+        ),
       ),
     ),
-  ],
-),
-    );
-  }
+  );
+}
+
+
+
+
 }

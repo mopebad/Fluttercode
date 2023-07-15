@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
         backgroundColor: Colors.grey[800],
         body: Center(
           child: SizedBox(
-            width: 800,
+            width: 650,
             height: 900,
             child: const CreatePuzzleScreen(),
           ),
@@ -102,18 +102,20 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
           elevation: 0,
         ),
       ),
-      backgroundColor: Colors.grey[800],
-      body: Container(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
+    backgroundColor: Colors.grey[800],
+    body: SingleChildScrollView( // Added SingleChildScrollView widget
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center, // Added this line
+        children: [ 
+          Center( // Added Center widget
+            child: Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: Text(
                 isAdmin
-                    ? 'Input Numbers Into The Tiles. Make The Puzzle Is Solvable.'
-                    : 'Enter Password.',
+                    ? 'Input Numbers Into The Tiles.'
+                    : 'Enter Password For Puzzle Creation.',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18.0,
@@ -121,6 +123,9 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                 ),
               ),
             ),
+          ),
+            
+          
             if (!isAdmin)
               Column(
                 children: [
@@ -299,7 +304,7 @@ class _NumberInputDialogState extends State<NumberInputDialog> {
       content: TextField(
         controller: _controller,
         keyboardType: TextInputType.number,
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.black), // Set the text color to black
         decoration: const InputDecoration(
           enabledBorder: UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white),
