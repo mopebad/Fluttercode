@@ -7,7 +7,7 @@ class ShikakuGame extends StatefulWidget {
 
   const ShikakuGame({Key? key, required this.numbers}) : super(key: key);
 
-   @override
+  @override
   ShikakuGameState createState() => ShikakuGameState();
 }
 
@@ -19,23 +19,7 @@ class ShikakuGameState extends State<ShikakuGame> {
   int colorIndex = 0;
   final List<Color> colors = [
     Colors.black38,
-    Colors.red,
-    Colors.green,
-    Colors.blue,
-    Colors.yellow,
-    Colors.orange,
-    Colors.pink,  
-    Colors.purple,
-    Colors.teal,
-    Colors.brown,
-    Colors.amber,
-    Colors.cyan,
-    Colors.deepOrange,
-    Colors.indigo,
-    Colors.lime,
-    Colors.lightBlue,
-    Colors.lightGreen,
-    Colors.deepPurple,
+    const Color.fromARGB(255, 0, 95, 86),
   ];
 
   @override
@@ -43,10 +27,6 @@ class ShikakuGameState extends State<ShikakuGame> {
     super.initState();
     grid = List.generate(7, (row) => List.generate(7, (col) => 0));
   }
-
-  
-
-  
 
   bool checkWin() {
     for (int row = 0; row < 7; row++) {
@@ -58,7 +38,7 @@ class ShikakuGameState extends State<ShikakuGame> {
     }
     return true;
   }
-  
+
   void showWinDialog() {
     showDialog(
       context: context,
@@ -79,7 +59,7 @@ class ShikakuGameState extends State<ShikakuGame> {
 
   void selectCell(int row, int col) {
     _logger.info('Selected cell at row $row, column $col');
-    
+
     setState(() {
       if (selectedRow != null && (selectedRow != row || selectedCol != col)) {
         // User has selected a second cell
@@ -141,33 +121,32 @@ class ShikakuGameState extends State<ShikakuGame> {
   }
 
   bool isValidSelection(int row1, int col1, int row2, int col2) {
-  int selectedNumber = -1;
-  int startRow = min(row1, row2);
-  int endRow = max(row1, row2);
-  int startCol = min(col1, col2);
-  int endCol = max(col1, col2);
+    int selectedNumber = -1;
+    int startRow = min(row1, row2);
+    int endRow = max(row1, row2);
+    int startCol = min(col1, col2);
+    int endCol = max(col1, col2);
 
-  for (int row = startRow; row <= endRow; row++) {
-    for (int col = startCol; col <= endCol; col++) {
-      int number = widget.numbers[row * 7 + col];
-      if (number > 0) {
-        if (selectedNumber == -1) {
-          selectedNumber = number;
-        } else if (selectedNumber != number) {
-          return false; // Condition 1 not met, more than 1 different positive integer selected
+    for (int row = startRow; row <= endRow; row++) {
+      for (int col = startCol; col <= endCol; col++) {
+        int number = widget.numbers[row * 7 + col];
+        if (number > 0) {
+          if (selectedNumber == -1) {
+            selectedNumber = number;
+          } else if (selectedNumber != number) {
+            return false; // Condition 1 not met, more than 1 different positive integer selected
+          }
         }
       }
     }
+
+    if (selectedNumber == -1) {
+      return false; // No positive integer selected
+    }
+
+    int selectedArea = (endRow - startRow + 1) * (endCol - startCol + 1);
+    return selectedArea == selectedNumber;
   }
-
-  if (selectedNumber == -1) {
-    return false; // No positive integer selected
-  }
-
-  int selectedArea = (endRow - startRow + 1) * (endCol - startCol + 1);
-  return selectedArea == selectedNumber;
-}
-
 
   void resetGrid() {
     setState(() {
@@ -179,133 +158,136 @@ class ShikakuGameState extends State<ShikakuGame> {
     });
   }
 
-   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.grey[800],
-    appBar: AppBar(
-      title: const Text(
-        'Daily Shikaku',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 34,
-          fontFamily: 'PlayfairDisplay',
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      centerTitle: true,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       backgroundColor: Colors.grey[800],
-    ),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 30.0),
-              child: Text(
-                'Divide the grid into rectangles or squares, ensuring that each piece contains exactly one number (excluding 0) and that the number corresponds to the area of the piece.\n Use the reset button to clear the board, and the undo button to revert your most recent move.',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontFamily: 'Lato',
+      appBar: AppBar(
+        title: const Text(
+          'Daily Shikaku',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 34,
+            fontFamily: 'PlayfairDisplay',
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.grey[800],
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 30.0),
+                child: Text(
+                  'Divide the grid into rectangles or squares, ensuring that each piece contains exactly one number (excluding 0) and that the number corresponds to the area of the piece.\n Use the reset button to clear the board, and the undo button to revert your most recent move.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontFamily: 'Lato',
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ListView.builder(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: 7,
+  itemBuilder: (context, rowIndex) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (int colIndex = 0; colIndex < 7; colIndex++)
+          GestureDetector(
+            onTap: () {
+              selectCell(rowIndex, colIndex);
+            },
+            child: Stack(
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    border: const Border(
+                      top: BorderSide(width: 4, color: Colors.white),
+                      left: BorderSide(width: 4, color: Colors.white),
+                      right: BorderSide(width: 4, color: Colors.white),
+                      bottom: BorderSide(width: 4, color: Colors.white),
+                    ),
+                    color: colors[grid[rowIndex][colIndex]],
+                    boxShadow: selectedRow == rowIndex && selectedCol == colIndex
+                        ? [const BoxShadow(color: Colors.blue, blurRadius: 5)]
+                        : null,
+                  ),
+                ),
+                Center(
+                  child: Visibility(
+                    visible: widget.numbers[rowIndex * 7 + colIndex] > 0,
+                    child: Text(
+                      '${widget.numbers[rowIndex * 7 + colIndex]}',
+                      style: const TextStyle(fontSize: 30, color: Colors.white),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: 7,
-                        itemBuilder: (context, row) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              for (int col = 0; col < 7; col++)
-                                GestureDetector(
-                                  onTap: () {
-                                    selectCell(row, col);
-                                  },
-                                  child: Container(
-                                    width: 100,
-                                    height: 100,
-                                    decoration: BoxDecoration(
-                                      border: const Border(
-                                        top: BorderSide(width: 4, color: Colors.white),
-                                        left: BorderSide(width: 4, color: Colors.white),
-                                        right: BorderSide(width: 4, color: Colors.white),
-                                        bottom: BorderSide(width: 4, color: Colors.white),
-                                      ),
-                                      color: colors[grid[row][col]],
-                                      boxShadow: selectedRow == row && selectedCol == col
-                                          ? [const BoxShadow(color: Colors.blue, blurRadius: 5)]
-                                          : null,
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        '${widget.numbers[row * 7 + col]}',
-                                        style: const TextStyle(fontSize: 30, color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                            ],
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3.0),
+          ),
+      ],
+    );
+  },
+),
+                        SizedBox(
+                          height: 16,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 3.0),
+                              ),
+                              child: FloatingActionButton(
+                                onPressed: resetGrid,
+                                tooltip: 'Reset',
+                                backgroundColor: Colors.grey[800],
+                                child: const Icon(Icons.refresh, color: Colors.white),
+                              ),
                             ),
-                            child: FloatingActionButton(
-                              onPressed: resetGrid,
-                              tooltip: 'Reset',
-                              backgroundColor: Colors.grey[800],
-                              child: const Icon(Icons.refresh, color: Colors.white),
+                            SizedBox(width: 16),
+                            Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(color: Colors.white, width: 3.0),
+                              ),
+                              child: FloatingActionButton(
+                                onPressed: undoMove,
+                                tooltip: 'Undo',
+                                backgroundColor: Colors.grey[800],
+                                child: const Icon(Icons.undo, color: Colors.white),
+                              ),
                             ),
-                          ),
-                          SizedBox(width: 16),
-                          Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 3.0),
-                            ),
-                            child: FloatingActionButton(
-                              onPressed: undoMove,
-                              tooltip: 'Undo',
-                              backgroundColor: Colors.grey[800],
-                              child: const Icon(Icons.undo, color: Colors.white),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
-
-
-
+    );
+  }
 }

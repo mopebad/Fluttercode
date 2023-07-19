@@ -75,7 +75,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShikakuGame(numbers: numbers),
+        builder: (context) => ShikakuGame(numbers: numbers, passwordEntered: isAdmin),
       ),
     );
   }
@@ -92,7 +92,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
     }
   }
 
-  @override
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -102,29 +102,28 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
           elevation: 0,
         ),
       ),
-    backgroundColor: Colors.grey[800],
-    body: SingleChildScrollView( // Added SingleChildScrollView widget
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.center, // Added this line
-        children: [ 
-          Center( // Added Center widget
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: Text(
-                isAdmin
-                    ? 'Input Numbers Into The Tiles.'
-                    : 'Enter Password For Puzzle Creation.',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontFamily: 'PlayfairDisplay',
+      backgroundColor: Colors.grey[800],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  isAdmin
+                      ? 'Input Numbers Into The Tiles.'
+                      : 'Enter Password For Puzzle Creation.',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18.0,
+                    fontFamily: 'PlayfairDisplay',
+                  ),
                 ),
               ),
             ),
-          ),
-            
           
             if (!isAdmin)
               Column(
@@ -194,7 +193,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                     ),
                 ],
               ),
-            Visibility(
+           Visibility(
               visible: isAdmin,
               child: Column(
                 children: [
@@ -204,9 +203,9 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       crossAxisCount: 7,
                       mainAxisSpacing: 8.0,
                       crossAxisSpacing: 8.0,
-                      childAspectRatio: 1.0,
+                      childAspectRatio: 1,
                     ),
-                    itemCount: numbers.length,
+                    itemCount: numbers.length,  
                     itemBuilder: (context, index) {
                       return NumberButton(
                         number: numbers[index],
@@ -216,7 +215,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 16.0),
+                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: startGame,
                     style: ElevatedButton.styleFrom(
@@ -235,7 +234,6 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
     );
   }
 }
-
 class NumberButton extends StatelessWidget {
   final int number;
   final ValueSetter<int> onPressed;
