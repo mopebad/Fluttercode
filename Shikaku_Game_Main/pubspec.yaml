@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.5
   logging: ^1.2.0
   firebase_auth: ^4.6.3
-  firebase_core: ^2.14.0
+  firebase_core: ^2.15.0
   google_sign_in: ^6.1.4
   font_awesome_flutter: ^10.4.0
   rive: ^0.11.3
@@ -88,6 +88,14 @@ flutter:
         - asset: fonts/PlayfairDisplay-VariableFont_wght.ttf
         - asset: fonts/PlayfairDisplay-Italic-VariableFont_wght.ttf
           style: italic
+    - family : Dapifer
+      fonts:
+        - asset: fonts/Dapifer Book.otf
+        - asset: fonts/Dapifer Bold.otf
+        - asset: fonts/Dapifer Black.otf
+        - asset: fonts/Dapifer Book Italic.otf
+          style: italic
+
     
     #- asset: fonts/Schyler-Italic.ttf
       # style: italic

@@ -200,7 +200,7 @@ class ShikakuGameState extends State<ShikakuGame> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 34,
-            fontFamily: 'PlayfairDisplay',
+            fontFamily: 'Dapifer',
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -214,6 +214,19 @@ class ShikakuGameState extends State<ShikakuGame> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Padding(
+                padding: EdgeInsets.only(bottom: 30.0),
+                child: Text(
+                  'Divide the grid into rectangles or squares, ensuring that each piece contains exactly one number (excluding 0) and that the number corresponds to the area of the piece.\n Use the reset button to clear the board, and the undo button to revert your most recent move.',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontFamily: 'Dapifer',
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
               Expanded(
                 child: SingleChildScrollView(
                   child: Center(
@@ -306,7 +319,7 @@ class ShikakuGameState extends State<ShikakuGame> {
                             },
                             child: Text(
                               'Back to Puzzle Creation',
-                              style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'PlayfairDisplay'),
+                              style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Dapifer'),
                             ),
                           ),
                         ),

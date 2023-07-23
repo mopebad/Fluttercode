@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:minigames/shikaku.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
+
+await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+);
   runApp(const MyApp());
 }
 
@@ -28,7 +34,11 @@ class MyApp extends StatelessWidget {
         appBar: AppBar(
           title: const Text(
             'Create Shikaku Puzzle',
-            style: TextStyle(fontFamily: 'PlayfairDisplay'),
+            style: TextStyle(
+            fontFamily: 'Dapifer',
+            fontSize: 24 // Set the font family to 'Dapifer'
+            // Set the font weight to bold
+          ),
           ),
           backgroundColor: Colors.grey[800],
         ),
@@ -118,8 +128,8 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       : 'Enter Password For Puzzle Creation.',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 18.0,
-                    fontFamily: 'PlayfairDisplay',
+                    fontSize: 24.0,
+                    fontFamily: 'Dapifer',
                   ),
                 ),
               ),
@@ -158,7 +168,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
-                        fontFamily: 'PlayfairDisplay',
+                        fontFamily: 'Dapifer',
                       ),
                     ),
                   ),
@@ -175,7 +185,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         color: Colors.white,
-                        fontFamily: 'PlayfairDisplay',
+                        fontFamily: 'Dapifer',
                       ),
                     ),
                   ),
@@ -186,7 +196,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                         'Incorrect password, try again.',
                         style: TextStyle(
                         color: Colors.red,
-                        fontFamily: 'PlayfairDisplay',
+                        fontFamily: 'Dapifer',
                         
                         fontSize: 20,)
                       ),

@@ -2,10 +2,13 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 
+
+
 class ShikakuGame extends StatefulWidget {
   final List<int> numbers;
+  final bool passwordEntered;
 
-  const ShikakuGame({Key? key, required this.numbers}) : super(key: key);
+  const ShikakuGame({Key? key, required this.numbers, required this.passwordEntered}) : super(key: key);
 
   @override
   ShikakuGameState createState() => ShikakuGameState();
@@ -19,7 +22,20 @@ class ShikakuGameState extends State<ShikakuGame> {
   int colorIndex = 0;
   final List<Color> colors = [
     Colors.black38,
-    const Color.fromARGB(255, 0, 95, 86),
+    Color.fromARGB(255, 9, 105, 96),
+    Color.fromARGB(255, 9, 105, 97),
+    Color.fromARGB(255, 9, 105, 98),
+    Color.fromARGB(255, 9, 105, 99),
+    Color.fromARGB(255, 9, 105, 100),
+    Color.fromARGB(255, 9, 106, 96),
+    Color.fromARGB(255, 9, 107, 96),
+    Color.fromARGB(255, 9, 108, 96),
+    Color.fromARGB(255, 9, 103, 96),
+    Color.fromARGB(254, 9, 105, 96),
+    Color.fromARGB(253, 9, 105, 96),
+    Color.fromARGB(252, 9, 105, 96),
+    Color.fromARGB(251, 9, 105, 96),
+    Color.fromARGB(250, 9, 105, 96),
   ];
 
   @override
@@ -52,10 +68,18 @@ class ShikakuGameState extends State<ShikakuGame> {
             },
             child: const Text('Exit'),
           ),
+          ElevatedButton(
+            // Call the sharePuzzle method when the "Share" button is pressed
+            onPressed: () {  },
+            child: const Text('Share'),
+          ),
         ],
       ),
     );
   }
+
+  // Implement the sharePuzzle method to launch the URL in the browser
+  
 
   void selectCell(int row, int col) {
     _logger.info('Selected cell at row $row, column $col');
@@ -168,12 +192,13 @@ class ShikakuGameState extends State<ShikakuGame> {
           style: TextStyle(
             color: Colors.white,
             fontSize: 34,
-            fontFamily: 'PlayfairDisplay',
+            fontFamily: 'Dapifer',
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
         backgroundColor: Colors.grey[800],
+        automaticallyImplyLeading: false,
       ),
       body: Center(
         child: Padding(
@@ -188,7 +213,8 @@ class ShikakuGameState extends State<ShikakuGame> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
-                    fontFamily: 'Lato',
+                    fontFamily: 'Dapifer',
+                    fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -199,53 +225,50 @@ class ShikakuGameState extends State<ShikakuGame> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        // ... (existing code)
+
                         ListView.builder(
-  shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  itemCount: 7,
-  itemBuilder: (context, rowIndex) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (int colIndex = 0; colIndex < 7; colIndex++)
-          GestureDetector(
-            onTap: () {
-              selectCell(rowIndex, colIndex);
-            },
-            child: Stack(
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    border: const Border(
-                      top: BorderSide(width: 4, color: Colors.white),
-                      left: BorderSide(width: 4, color: Colors.white),
-                      right: BorderSide(width: 4, color: Colors.white),
-                      bottom: BorderSide(width: 4, color: Colors.white),
-                    ),
-                    color: colors[grid[rowIndex][colIndex]],
-                    boxShadow: selectedRow == rowIndex && selectedCol == colIndex
-                        ? [const BoxShadow(color: Colors.blue, blurRadius: 5)]
-                        : null,
-                  ),
-                ),
-                Center(
-                  child: Visibility(
-                    visible: widget.numbers[rowIndex * 7 + colIndex] > 0,
-                    child: Text(
-                      '${widget.numbers[rowIndex * 7 + colIndex]}',
-                      style: const TextStyle(fontSize: 30, color: Colors.white),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
-    );
-  },
-),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: 7,
+                          itemBuilder: (context, row) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                for (int col = 0; col < 7; col++)
+                                  GestureDetector(
+                                    onTap: () {
+                                      selectCell(row, col);
+                                    },
+                                    child: Container(
+                                      width: 100,
+                                      height: 100,
+                                      decoration: BoxDecoration(
+                                        border: const Border(
+                                          top: BorderSide(width: 4, color: Colors.white),
+                                          left: BorderSide(width: 4, color: Colors.white),
+                                          right: BorderSide(width: 4, color: Colors.white),
+                                          bottom: BorderSide(width: 4, color: Colors.white),
+                                        ),
+                                        color: colors[grid[row][col]],
+                                        boxShadow: selectedRow == row && selectedCol == col
+                                            ? [const BoxShadow(color: Color.fromARGB(255, 9, 105, 96), blurRadius: 5)]
+                                            : null,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          widget.numbers[row * 7 + col] != 0
+                                              ? '${widget.numbers[row * 7 + col]}'
+                                              : '', // Show the number or empty string
+                                          style: const TextStyle(fontSize: 30, color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
                         SizedBox(
                           height: 16,
                         ),
@@ -278,6 +301,19 @@ class ShikakuGameState extends State<ShikakuGame> {
                               ),
                             ),
                           ],
+                        ),
+                        SizedBox(height: 16),
+                        Visibility(
+                          visible: widget.passwordEntered, // Show the button only if password is entered correctly
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context); // Navigate back to the puzzle creation screen
+                            },
+                            child: Text(
+                              'Back to Puzzle Creation',
+                              style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Dapifer'),
+                            ),
+                          ),
                         ),
                       ],
                     ),

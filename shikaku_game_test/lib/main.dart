@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:minigames/shikaku.dart';
 
+
+
 void main() async {
-  runApp(MyApp());
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  // Generate the initial puzzle numbers here
-  List<int> generatePuzzleNumbers() {
-    return List.generate(49, (_) => 0);
-  }
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<int> puzzleNumbers = generatePuzzleNumbers(); // Generate the puzzle numbers
     return MaterialApp(
       title: 'Daily Shikaku',
       theme: ThemeData(
@@ -28,32 +27,26 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: ShikakuGameMainScreen(puzzleNumbers: puzzleNumbers), // Pass the puzzle numbers here
-    );
-  }
-}
-
-class ShikakuGameMainScreen extends StatelessWidget {
-  final List<int> puzzleNumbers; // Add this variable to hold the non-zero puzzle numbers
-
-  ShikakuGameMainScreen({Key? key, required this.puzzleNumbers}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ShikakuGame(numbers: puzzleNumbers), // Pass the puzzleNumbers to the game screen
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => CreatePuzzleScreen(),
-            ),
-          );
-        },
-        label: const Text('Create Game'),
-        icon: const Icon(Icons.add),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Create Shikaku Puzzle',
+            style: TextStyle(
+            fontFamily: 'Dapifer',
+            fontSize: 24 // Set the font family to 'Dapifer'
+            // Set the font weight to bold
+          ),
+          ),
+          backgroundColor: Colors.grey[800],
+        ),
         backgroundColor: Colors.grey[800],
+        body: Center(
+          child: SizedBox(
+            width: 650,
+            height: 900,
+            child: const CreatePuzzleScreen(),
+          ),
+        ),
       ),
     );
   }
@@ -68,6 +61,7 @@ class CreatePuzzleScreen extends StatefulWidget {
 
 class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
   late List<int> numbers;
+  bool isAdmin = false;
   late TextEditingController passwordController;
   bool showIncorrectPasswordError = false; // Added state variable
 
@@ -85,16 +79,27 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
   }
 
   void startGame() {
-    List<int> puzzleNumbers = numbers.where((number) => number != 0).toList(); // Filter out the zeros
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShikakuGameMainScreen(puzzleNumbers: puzzleNumbers),
+        builder: (context) => ShikakuGame(numbers: numbers, passwordEntered: isAdmin),
       ),
     );
   }
 
-  @override
+  void submitPassword(String password) {
+    if (password == '1234') {
+      setState(() {
+        isAdmin = true;
+      });
+    } else {
+      setState(() {
+        showIncorrectPasswordError = true;
+      });
+    }
+  }
+
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -105,27 +110,99 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
         ),
       ),
       backgroundColor: Colors.grey[800],
-      body: SingleChildScrollView( // Added SingleChildScrollView widget
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [ 
-            Center( // Added Center widget
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 16.0),
                 child: Text(
-                  'Input Numbers Into The Tiles.',
+                  isAdmin
+                      ? 'Input Numbers Into The Tiles.'
+                      : 'Enter Password For Puzzle Creation.',
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 18.0,
-                    fontFamily: 'PlayfairDisplay',
+                    fontSize: 24.0,
+                    fontFamily: 'Dapifer',
                   ),
                 ),
               ),
             ),
-              
-            if (numbers.contains(0)) // Check if there are any empty cells
+          
+            if (!isAdmin)
               Column(
+                children: [
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 3.0, color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 3.0, color: Colors.white),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      submitPassword(passwordController.text);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'Dapifer',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: startGame,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    child: const Text(
+                      'Continue to Puzzle',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'Dapifer',
+                      ),
+                    ),
+                  ),
+                  if (showIncorrectPasswordError) // Display error message if incorrect password
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Incorrect password, try again.',
+                        style: TextStyle(
+                        color: Colors.red,
+                        fontFamily: 'Dapifer',
+                        
+                        fontSize: 20,)
+                      ),
+                    ),
+                ],
+              ),
+           Visibility(
+              visible: isAdmin,
+              child: Column(
                 children: [
                   GridView.builder(
                     shrinkWrap: true,
@@ -133,9 +210,9 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       crossAxisCount: 7,
                       mainAxisSpacing: 8.0,
                       crossAxisSpacing: 8.0,
-                      childAspectRatio: 1.0,
+                      childAspectRatio: 1,
                     ),
-                    itemCount: numbers.length,
+                    itemCount: numbers.length,  
                     itemBuilder: (context, index) {
                       return NumberButton(
                         number: numbers[index],
@@ -145,7 +222,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                       );
                     },
                   ),
-                  const SizedBox(height: 16.0),
+                   const SizedBox(height: 16.0),
                   ElevatedButton(
                     onPressed: startGame,
                     style: ElevatedButton.styleFrom(
@@ -157,27 +234,13 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
                   ),
                 ],
               ),
-            if (numbers.every((number) => number != 0)) // Check if all cells are filled
-              ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    numbers = List.generate(49, (_) => 0); // Reset the numbers list
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: Colors.grey[800],
-                  side: const BorderSide(width: 3.0, color: Colors.white),
-                  padding: const EdgeInsets.all(16.0),
-                ),
-                child: const Text('Create New Puzzle', style: TextStyle(color: Colors.white)),
-              ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
 class NumberButton extends StatelessWidget {
   final int number;
   final ValueSetter<int> onPressed;
