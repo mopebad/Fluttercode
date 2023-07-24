@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:minigames/shikaku.dart';
+import 'package:ShikakuGame/shikaku.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-void main() async {
 
-await Firebase.initializeApp(
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-);
+  );
+
   runApp(const MyApp());
 }
 
@@ -101,6 +104,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
       });
     }
   }
+  
 
     @override
   Widget build(BuildContext context) {

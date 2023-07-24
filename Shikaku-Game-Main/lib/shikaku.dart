@@ -1,8 +1,8 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:url_launcher/url_launcher.dart';
-
+import 'package:url_launcher/url_launcher.dart';  
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ShikakuGame extends StatefulWidget {
   final List<int> numbers;
@@ -38,10 +38,33 @@ class ShikakuGameState extends State<ShikakuGame> {
     Color.fromARGB(250, 9, 105, 96),
   ];
 
+CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('puzzles');
+
+ void listenToPuzzleChanges() {
+  puzzleCollection.doc('current_puzzle').snapshots().listen((snapshot) {
+    if (snapshot.exists) {
+      // Update the grid with the new puzzle data
+      setState(() {
+        // Convert the data from Firestore to the grid
+        // Cast the snapshot data to Map<String, dynamic>
+        Map<String, dynamic>? snapshotData = snapshot.data() as Map<String, dynamic>?;
+
+        // Check if the 'data' field exists and is a List<dynamic> with 49 elements
+        List<dynamic> puzzleData = snapshotData?['data'] != null && snapshotData!['data'] is List<dynamic> ? snapshotData['data'] : [];
+
+        // Update the grid with the puzzle data
+        grid = List.generate(7, (row) => List.generate(7, (col) => puzzleData[row * 7 + col]));
+      });
+    }
+  });
+}
+
+
   @override
   void initState() {
     super.initState();
     grid = List.generate(7, (row) => List.generate(7, (col) => 0));
+    listenToPuzzleChanges();
   }
 
   bool checkWin() {
@@ -190,6 +213,12 @@ class ShikakuGameState extends State<ShikakuGame> {
     });
   }
 
+  // Function to save the current puzzle state to Firestore
+  void savePuzzleState() async {
+    List<dynamic> puzzleData = grid.expand((row) => row).toList();
+    await puzzleCollection.doc('current_puzzle').set({'data': puzzleData});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -321,6 +350,7 @@ class ShikakuGameState extends State<ShikakuGame> {
                               'Back to Puzzle Creation',
                               style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Dapifer'),
                             ),
+                            
                           ),
                         ),
                       ],
