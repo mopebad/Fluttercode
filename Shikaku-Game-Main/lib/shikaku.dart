@@ -6,9 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ShikakuGame extends StatefulWidget {
   final List<int> numbers;
-  final bool passwordEntered;
 
-  const ShikakuGame({Key? key, required this.numbers, required this.passwordEntered}) : super(key: key);
+  const ShikakuGame({Key? key, required this.numbers}) : super(key: key);
 
   @override
   ShikakuGameState createState() => ShikakuGameState();
@@ -22,43 +21,43 @@ class ShikakuGameState extends State<ShikakuGame> {
   int colorIndex = 0;
   final List<Color> colors = [
     Colors.black38,
-    Color.fromARGB(255, 9, 105, 96),
-    Color.fromARGB(255, 9, 105, 97),
-    Color.fromARGB(255, 9, 105, 98),
-    Color.fromARGB(255, 9, 105, 99),
-    Color.fromARGB(255, 9, 105, 100),
-    Color.fromARGB(255, 9, 106, 96),
-    Color.fromARGB(255, 9, 107, 96),
-    Color.fromARGB(255, 9, 108, 96),
-    Color.fromARGB(255, 9, 103, 96),
-    Color.fromARGB(254, 9, 105, 96),
-    Color.fromARGB(253, 9, 105, 96),
-    Color.fromARGB(252, 9, 105, 96),
-    Color.fromARGB(251, 9, 105, 96),
-    Color.fromARGB(250, 9, 105, 96),
+    const Color.fromARGB(255, 9, 105, 96),
+    const Color.fromARGB(255, 9, 105, 97),
+    const Color.fromARGB(255, 9, 105, 98),
+    const Color.fromARGB(255, 9, 105, 99),
+    const Color.fromARGB(255, 9, 105, 100),
+    const Color.fromARGB(255, 9, 106, 96),
+    const Color.fromARGB(255, 9, 107, 96),
+    const Color.fromARGB(255, 9, 108, 96),
+    const Color.fromARGB(255, 9, 103, 96),
+    const Color.fromARGB(254, 9, 105, 96),
+    const Color.fromARGB(253, 9, 105, 96),
+    const Color.fromARGB(252, 9, 105, 96),
+    const Color.fromARGB(251, 9, 105, 96),
+    const Color.fromARGB(250, 9, 105, 96),
+    const Color.fromARGB(249, 9, 105, 95),
   ];
 
-CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('puzzles');
+  CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('puzzles');
 
- void listenToPuzzleChanges() {
-  puzzleCollection.doc('current_puzzle').snapshots().listen((snapshot) {
-    if (snapshot.exists) {
-      // Update the grid with the new puzzle data
-      setState(() {
-        // Convert the data from Firestore to the grid
-        // Cast the snapshot data to Map<String, dynamic>
-        Map<String, dynamic>? snapshotData = snapshot.data() as Map<String, dynamic>?;
+  void listenToPuzzleChanges() {
+    puzzleCollection.doc('current_puzzle').snapshots().listen((snapshot) {
+      if (snapshot.exists) {
+        // Update the grid with the new puzzle data
+        setState(() {
+          // Convert the data from Firestore to the grid
+          // Cast the snapshot data to Map<String, dynamic>
+          Map<String, dynamic>? snapshotData = snapshot.data() as Map<String, dynamic>?;
 
-        // Check if the 'data' field exists and is a List<dynamic> with 49 elements
-        List<dynamic> puzzleData = snapshotData?['data'] != null && snapshotData!['data'] is List<dynamic> ? snapshotData['data'] : [];
+          // Check if the 'data' field exists and is a List<dynamic> with 49 elements
+          List<dynamic> puzzleData = snapshotData?['data'] != null && snapshotData!['data'] is List<dynamic> ? snapshotData['data'] : [];
 
-        // Update the grid with the puzzle data
-        grid = List.generate(7, (row) => List.generate(7, (col) => puzzleData[row * 7 + col]));
-      });
-    }
-  });
-}
-
+          // Update the grid with the puzzle data
+          grid = List.generate(7, (row) => List.generate(7, (col) => puzzleData[row * 7 + col]));
+        });
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -92,7 +91,7 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
             child: const Text('Exit'),
           ),
           ElevatedButton(
-            onPressed: sharePuzzle, // Call the sharePuzzle method when the "Share" button is pressed
+            onPressed: sharePuzzle,
             child: const Text('Share'),
           ),
         ],
@@ -100,9 +99,7 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
     );
   }
 
-  // Implement the sharePuzzle method to launch the URL in the browser
   void sharePuzzle() async {
-    // Replace this with the actual URL you want to share.
     String url = 'https://www.example.com/puzzle';
 
     if (await canLaunch(url)) {
@@ -117,12 +114,10 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
 
     setState(() {
       if (selectedRow != null && (selectedRow != row || selectedCol != col)) {
-        // User has selected a second cell
         int area = selectedArea(row, col, selectedRow!, selectedCol!);
         _logger.info('Selected area $area');
 
         if (isValidSelection(row, col, selectedRow!, selectedCol!)) {
-          // User has selected a valid area
           _logger.info('Valid selection');
           colorSelection(row, col, selectedRow!, selectedCol!);
         }
@@ -134,7 +129,6 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
         selectedRow = null;
         selectedCol = null;
       } else {
-        // User has selected a cell for the first time
         selectedRow = row;
         selectedCol = col;
       }
@@ -189,14 +183,14 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
           if (selectedNumber == -1) {
             selectedNumber = number;
           } else if (selectedNumber != number) {
-            return false; // Condition 1 not met, more than 1 different positive integer selected
+            return false;
           }
         }
       }
     }
 
     if (selectedNumber == -1) {
-      return false; // No positive integer selected
+      return false;
     }
 
     int selectedArea = (endRow - startRow + 1) * (endCol - startCol + 1);
@@ -213,7 +207,6 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
     });
   }
 
-  // Function to save the current puzzle state to Firestore
   void savePuzzleState() async {
     List<dynamic> puzzleData = grid.expand((row) => row).toList();
     await puzzleCollection.doc('current_puzzle').set({'data': puzzleData});
@@ -262,50 +255,49 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // ... (existing code)
-
                         ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: 7,
-                          itemBuilder: (context, row) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                for (int col = 0; col < 7; col++)
-                                  GestureDetector(
-                                    onTap: () {
-                                      selectCell(row, col);
-                                    },
-                                    child: Container(
-                                      width: 100,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        border: const Border(
-                                          top: BorderSide(width: 4, color: Colors.white),
-                                          left: BorderSide(width: 4, color: Colors.white),
-                                          right: BorderSide(width: 4, color: Colors.white),
-                                          bottom: BorderSide(width: 4, color: Colors.white),
-                                        ),
-                                        color: colors[grid[row][col]],
-                                        boxShadow: selectedRow == row && selectedCol == col
-                                            ? [const BoxShadow(color: Color.fromARGB(255, 9, 105, 96), blurRadius: 5)]
-                                            : null,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          widget.numbers[row * 7 + col] != 0
-                                              ? '${widget.numbers[row * 7 + col]}'
-                                              : '', // Show the number or empty string
-                                          style: const TextStyle(fontSize: 30, color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            );
-                          },
-                        ),
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: 7,
+  itemBuilder: (context, row) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (int col = 0; col < 7; col++)
+          GestureDetector(
+            onTap: () {
+              selectCell(row, col);
+            },
+            child: Container(
+              width: 75, // Reduced cell width
+              height: 75, // Reduced cell height
+              decoration: BoxDecoration(
+                border: const Border(
+                  top: BorderSide(width: 2, color: Colors.white),
+                  left: BorderSide(width: 2, color: Colors.white),
+                  right: BorderSide(width: 2, color: Colors.white),
+                  bottom: BorderSide(width: 2, color: Colors.white),
+                ),
+                color: colors[grid[row][col]],
+                boxShadow: selectedRow == row && selectedCol == col
+                    ? [const BoxShadow(color: Color.fromARGB(255, 9, 105, 96), blurRadius: 5)]
+                    : null,
+              ),
+              child: Center(
+                child: Text(
+                  widget.numbers[row * 7 + col] != 0
+                      ? '${widget.numbers[row * 7 + col]}'
+                      : '',
+                  style: const TextStyle(fontSize: 20, color: Colors.white), // Reduced font size
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  },
+),
+
                         SizedBox(
                           height: 16,
                         ),
@@ -338,20 +330,6 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
                               ),
                             ),
                           ],
-                        ),
-                        SizedBox(height: 16),
-                        Visibility(
-                          visible: widget.passwordEntered, // Show the button only if password is entered correctly
-                          child: ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context); // Navigate back to the puzzle creation screen
-                            },
-                            child: Text(
-                              'Back to Puzzle Creation',
-                              style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Dapifer'),
-                            ),
-                            
-                          ),
                         ),
                       ],
                     ),
