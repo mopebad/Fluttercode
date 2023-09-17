@@ -120,7 +120,7 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start, 
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
