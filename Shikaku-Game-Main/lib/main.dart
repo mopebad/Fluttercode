@@ -3,6 +3,8 @@ import 'package:ShikakuGame/shikaku.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -36,10 +38,10 @@ class MyApp extends StatelessWidget {
           title: const Text(
             'Create Shikaku Puzzle',
             style: TextStyle(
-              fontFamily: 'Dapifer',
-              fontSize: 24, // Set the font family to 'Dapifer'
-              // Set the font weight to bold
-            ),
+            fontFamily: 'Dapifer',
+            fontSize: 24 // Set the font family to 'Dapifer'
+            // Set the font weight to bold
+          ),
           ),
           backgroundColor: Colors.grey[800],
         ),
@@ -65,7 +67,9 @@ class CreatePuzzleScreen extends StatefulWidget {
 
 class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
   late List<int> numbers;
+  bool isAdmin = false;
   late TextEditingController passwordController;
+  bool showIncorrectPasswordError = false; // Added state variable
 
   @override
   void initState() {
@@ -84,12 +88,25 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ShikakuGame(numbers: numbers),
+        builder: (context) => ShikakuGame(numbers: numbers, passwordEntered: isAdmin),
       ),
     );
   }
 
-  @override
+  void submitPassword(String password) {
+    if (password == '1234') {
+      setState(() {
+        isAdmin = true;
+      });
+    } else {
+      setState(() {
+        showIncorrectPasswordError = true;
+      });
+    }
+  }
+  
+
+    @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
@@ -107,77 +124,130 @@ class _CreatePuzzleScreenState extends State<CreatePuzzleScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Text(
-                          'Input Numbers Into The Tiles.',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24.0,
-                            fontFamily: 'Dapifer',
-                          ),
-                        ),
-                      ),
-                    ),
-                    Center(
-  child: Padding(
-    padding: const EdgeInsets.only(right: 0.0), // Adjust the right padding as needed
-    child: Container(
-      width: 500, // Set the desired width
-      height: 600, // Set the desired height
-      child: GridView.builder(
-        shrinkWrap: true,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 7,
-          mainAxisSpacing: 8.0,
-          crossAxisSpacing: 8.0,
-          childAspectRatio: 1,
-        ),
-        itemCount: numbers.length,
-        itemBuilder: (context, index) {
-          return NumberButton(
-            number: numbers[index],
-            onPressed: (number) {
-              setNumber(index, number);
-            },
-          );
-        },
-      ),
-    ),
-  ),
-),
-                      const SizedBox(height: 16.0),
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: startGame,
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.grey[800],
-                            side: const BorderSide(width: 3.0, color: Colors.white),
-                            padding: const EdgeInsets.all(16.0),
-                          ),
-                          child: const Text('Start Game', style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                    ],
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: Text(
+                  isAdmin
+                      ? 'Input Numbers Into The Tiles.'
+                      : 'Enter Password For Puzzle Creation.',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.0,
+                    fontFamily: 'Dapifer',
+                  ),
                 ),
               ),
             ),
-          ], // Add a closing bracket for the "children" list of the outer Column
+          
+            if (!isAdmin)
+              Column(
+                children: [
+                  TextFormField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      fillColor: Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 3.0, color: Colors.white),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 3.0, color: Colors.white),
+                      ),
+                    ),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: () {
+                      submitPassword(passwordController.text);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    child: const Text(
+                      'Submit',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'Dapifer',
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  ElevatedButton(
+                    onPressed: startGame,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(20.0),
+                    ),
+                    child: const Text(
+                      'Continue to Puzzle',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontFamily: 'Dapifer',
+                      ),
+                    ),
+                  ),
+                  if (showIncorrectPasswordError) // Display error message if incorrect password
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8.0),
+                      child: Text(
+                        'Incorrect password, try again.',
+                        style: TextStyle(
+                        color: Colors.red,
+                        fontFamily: 'Dapifer',
+                        
+                        fontSize: 20,)
+                      ),
+                    ),
+                ],
+              ),
+           Visibility(
+              visible: isAdmin,
+              child: Column(
+                children: [
+                  GridView.builder(
+                    shrinkWrap: true,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 7,
+                      mainAxisSpacing: 8.0,
+                      crossAxisSpacing: 8.0,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: numbers.length,  
+                    itemBuilder: (context, index) {
+                      return NumberButton(
+                        number: numbers[index],
+                        onPressed: (number) {
+                          setNumber(index, number);
+                        },
+                      );
+                    },
+                  ),
+                   const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: startGame,
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.grey[800],
+                      side: const BorderSide(width: 3.0, color: Colors.white),
+                      padding: const EdgeInsets.all(16.0),
+                    ),
+                    child: const Text('Start Game', style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
-
-
-
 class NumberButton extends StatelessWidget {
   final int number;
   final ValueSetter<int> onPressed;
