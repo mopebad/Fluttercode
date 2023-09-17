@@ -1,7 +1,64 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+class CongratulationsDialog extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.grey[800], // Set background color to grey
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Congratulations!',
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              fontFamily: 'Dapifer', // Set font to Dapifer
+              color: Colors.white, // Set text color to white
+            ),
+          ),
+          SizedBox(height: 16.0),
+          Text(
+            'You have solved the puzzle.',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontFamily: 'Dapifer', // Set font to Dapifer
+              color: Colors.white, // Set text color to white
+            ),
+          ),
+          SizedBox(height: 16.0),
+          OutlinedButton( // Use OutlinedButton with a white outline
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: Colors.white, width: 1.0), 
+            ),
+            child: Text(
+              'Exit',
+              style: TextStyle(
+                fontSize: 18.0,
+                fontFamily: 'Dapifer', // Set font to Dapifer
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
 
 class ShikakuGame extends StatefulWidget {
   final List<int> numbers;
@@ -77,24 +134,16 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
     return true;
   }
 
+  
+
   void showWinDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Congratulations!'),
-        content: const Text('You have solved the puzzle.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Exit'),
-          ),
-          
-        ],
-      ),
-    );
-  }
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      content: CongratulationsDialog(),
+    ),
+  );
+}
 
   void selectCell(int row, int col) {
     _logger.info('Selected cell at row $row, column $col');
@@ -262,8 +311,8 @@ CollectionReference puzzleCollection = FirebaseFirestore.instance.collection('pu
                                       selectCell(row, col);
                                     },
                                     child: Container(
-                                      width: 100,
-                                      height: 100,
+                                      width: 95,
+                                      height: 95,
                                       decoration: BoxDecoration(
                                         border: const Border(
                                           top: BorderSide(width: 4, color: Colors.white),
